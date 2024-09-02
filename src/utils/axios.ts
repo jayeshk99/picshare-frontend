@@ -12,16 +12,13 @@ const apiClient = axios.create({
 
 apiClient.interceptors.request.use(
   (config) => {
-    // const token = localStorage.getItem('token');
-    // console.log('token:', token);
-    // if (token) {
-    //   config.headers.Authorization = `Bearer ${token}`;
-    // }
+    const userId = localStorage.getItem('userId');
+    if (userId) {
+      config.headers.Authorization = `Bearer ${userId}`;
+    }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 apiClient.interceptors.response.use(
@@ -30,7 +27,6 @@ apiClient.interceptors.response.use(
   },
   (error) => {
     if (error.response && error.response.status === 401) {
-      // Redirect to login page or show a login modal
     }
     return Promise.reject(error);
   }

@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, Button, TextField, Typography } from '@mui/material';
 import { makeStyles } from '@mui/styles';
+import { login } from '../../services/userApis';
+import { useNavigate } from 'react-router-dom';
 
 const useStyles = makeStyles({
   root: {
@@ -39,9 +41,24 @@ const useStyles = makeStyles({
 
 const Login: React.FC = () => {
   const classes = useStyles();
+  const [userName, setUserName] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
-  const handleLogin = () => {
-    // Handle the login logic
+  const handleLogin = async () => {
+    try {
+      const response = await login(userName);
+      console.log('response:', response);
+      console.log('Login successful!');
+      navigate('/');
+    } catch (error) {
+      setError('Failed to login');
+      console.error(error);
+    }
+  };
+
+  const inputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUserName(e.target.value);
   };
 
   return (
@@ -65,6 +82,8 @@ const Login: React.FC = () => {
           variant="outlined"
           placeholder="Username"
           className={classes.textField}
+          value={userName}
+          onChange={inputHandler}
         />
         <Button
           variant="contained"
