@@ -43,11 +43,7 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
   ],
 }));
 
-interface ImageCardProps {
-  imageUrl: string;
-}
 export const ImageCard = ({ image }: any) => {
-  console.log('props:', image);
   const [expanded, setExpanded] = React.useState(false);
 
   const handleExpandClick = () => {
