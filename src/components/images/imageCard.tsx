@@ -43,7 +43,11 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
   ],
 }));
 
-export const RecipeReviewCard = () => {
+interface ImageCardProps {
+  imageUrl: string;
+}
+export const ImageCard = ({ image }: any) => {
+  console.log('props:', image);
   const [expanded, setExpanded] = React.useState(false);
 
   const handleExpandClick = () => {
@@ -69,7 +73,7 @@ export const RecipeReviewCard = () => {
       <CardMedia
         component="img"
         height="194"
-        image="/static/images/cards/paella.jpg"
+        image={image.imageUrl}
         alt="Paella dish"
       />
       <CardContent>

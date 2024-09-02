@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Layout } from './layout';
-import { HomePage, FavouritesPage, LoginPage } from './pages';
+import { HomePage, FavouritesPage, Login } from './pages';
 
 export const AppRoutes: React.FC = () => {
   return (
@@ -10,7 +10,7 @@ export const AppRoutes: React.FC = () => {
         <Route path="/" element={<Layout />}>
           <Route index element={<HomePage />} />
           <Route path="favourites" element={<FavouritesPage />} />
-          <Route path="login" element={<LoginPage />} />
+          <Route path="login" element={<Login />} />
         </Route>
       </Routes>
     </Router>
