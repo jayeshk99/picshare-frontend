@@ -1,7 +1,7 @@
 import React from 'react';
 import { Modal, Box, Typography, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { IImageData } from '../../types/home'; // Adjust the import path as necessary
+import { IImageData } from '../../types/home';
 
 interface ImageModalProps {
   open: boolean;

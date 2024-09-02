@@ -43,12 +43,21 @@ const Login: React.FC = () => {
   const classes = useStyles();
   const [userName, setUserName] = useState('');
   const [error, setError] = useState('');
+  const [titleError, setTitleError] = useState('');
   const navigate = useNavigate();
 
   const handleLogin = async () => {
     try {
+      setTitleError('');
+      const usernameRegex = /^[a-zA-Z0-9._-]{3,16}$/;
+
+      if (!usernameRegex.test(userName)) {
+        setTitleError(
+          'Username must be 3-16 characters and can only include letters, numbers, dots, underscores, or hyphens.'
+        );
+        return;
+      }
       await login(userName);
-      console.log('Login successful!');
       navigate('/');
     } catch (error) {
       setError('Failed to login');
@@ -81,6 +90,8 @@ const Login: React.FC = () => {
           variant="outlined"
           placeholder="Username"
           className={classes.textField}
+          error={!!titleError}
+          helperText={titleError}
           value={userName}
           onChange={inputHandler}
         />

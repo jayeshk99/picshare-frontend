@@ -25,3 +25,5 @@ export interface IFavouriteData {
   user: IUserData;
   post: Omit<IImageData, 'user'>;
 }
+
+export type CardType = 'home' | 'favourite';

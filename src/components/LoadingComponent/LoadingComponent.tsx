@@ -1,6 +1,5 @@
-// src/components/LoadingComponent.tsx
 import React from 'react';
-import './LoadingComponent.css'; // Assuming CSS is in the same relative path
+import './LoadingComponent.css';
 
 interface LoadingComponentProps {
   text: string;

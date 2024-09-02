@@ -8,39 +8,37 @@ import {
   Box,
 } from '@mui/material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import { IImageData } from '../../types/home'; // Adjust the import path as necessary
+import { CardType, IImageData } from '../../types/home';
 import ImageModal from '../Modal/ImageModal';
-// Adjust the import path as necessary
 
 interface ImageCardProps {
   image: IImageData;
   isFavorite: boolean;
   toggleFavorite: (id: string) => Promise<void>;
+  cardType: CardType;
+  favouriteId?: string;
+  isLoggedIn: boolean;
 }
 
 const ImageCard: React.FC<ImageCardProps> = ({
   image,
   isFavorite,
+  cardType,
   toggleFavorite,
+  favouriteId,
+  isLoggedIn,
 }) => {
   const [open, setOpen] = useState(false);
-
-  // const toggleFavorite = async (e: any) => {
-  //   e.stopPropagation();
-  //   try {
-  //     await addToFavorites(image.id);
-  //     refreshData();
-  //     // Re-fetch favorites to update UI
-  //   } catch (error) {
-  //     console.error('Error adding to favorites:', error);
-  //   }
-  // };
 
   const handleFavoriteClick = async (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
     e.stopPropagation();
-    await toggleFavorite(image.id);
+    if (cardType === 'home') {
+      await toggleFavorite(image.id);
+    } else {
+      await toggleFavorite(favouriteId as string);
+    }
   };
 
   const handleOpen = () => setOpen(true);
@@ -83,18 +81,19 @@ const ImageCard: React.FC<ImageCardProps> = ({
                 {new Date(image.createdAt).toLocaleDateString()}
               </Typography>
             </Box>
-            <IconButton
-              aria-label="add to favorites"
-              onClick={handleFavoriteClick}
-              color={isFavorite ? 'error' : 'default'}
-            >
-              <FavoriteIcon />
-            </IconButton>
+            {isLoggedIn && (
+              <IconButton
+                aria-label="add to favorites"
+                onClick={handleFavoriteClick}
+                color={isFavorite ? 'error' : 'default'}
+              >
+                <FavoriteIcon />
+              </IconButton>
+            )}
           </Box>
         </CardContent>
       </Card>
 
-      {/* Use the ImageModal component */}
       <ImageModal open={open} onClose={handleClose} image={image} />
     </>
   );

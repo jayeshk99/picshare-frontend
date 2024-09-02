@@ -8,28 +8,54 @@ import {
   IconButton,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import { useNavigate } from 'react-router-dom';
+import { sharePost } from '../../services/sharePost';
 
 interface SharePictureModalProps {
   open: boolean;
   onClose: () => void;
-  onShare: (url: string, title: string) => void;
 }
 
 const SharePictureModal: React.FC<SharePictureModalProps> = ({
   open,
   onClose,
-  onShare,
 }) => {
   const [url, setUrl] = useState('');
   const [title, setTitle] = useState('');
+  const [urlError, setUrlError] = useState('');
+  const [titleError, setTitleError] = useState('');
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (url && title) {
-      onShare(url, title);
-      setUrl('');
-      setTitle('');
-      onClose();
+  const handleSubmit = async (e: React.FormEvent) => {
+    try {
+      e.preventDefault();
+      setUrlError('');
+      setTitleError('');
+
+      // Regex for URL validation
+      const urlPattern =
+        /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,6}(:\d{1,5})?(\/\S*)?$/;
+
+      const titlePattern = /^[A-Za-z]+$/;
+
+      console.log('url test', urlPattern.test(url));
+      if (!urlPattern.test(url)) {
+        setUrlError('Please enter a valid URL.');
+        return;
+      }
+      if (!titlePattern.test(title)) {
+        setTitleError('Title must contain only letters without any spaces.');
+        return;
+      }
+      if (url && title) {
+        await sharePost(url, title);
+        navigate('/');
+        setUrl('');
+        setTitle('');
+        onClose();
+      }
+    } catch (error) {
+      throw error;
     }
   };
 
@@ -71,6 +97,8 @@ const SharePictureModal: React.FC<SharePictureModalProps> = ({
             label="New picture URL"
             variant="outlined"
             fullWidth
+            error={!!urlError}
+            helperText={urlError}
             value={url}
             onChange={(e) => setUrl(e.target.value)}
           />
@@ -78,9 +106,12 @@ const SharePictureModal: React.FC<SharePictureModalProps> = ({
             label="Title"
             variant="outlined"
             fullWidth
+            error={!!titleError}
+            helperText={titleError}
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
+
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
             <Button onClick={onClose} sx={{ mr: 2 }}>
               Cancel

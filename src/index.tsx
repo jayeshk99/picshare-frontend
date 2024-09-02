@@ -28,7 +28,9 @@ const router = createBrowserRouter([
       {
         path: 'favourites',
         element: (
-          <Suspense fallback={<div>Loading favourites page...</div>}>
+          <Suspense
+            fallback={<LoadingComponent text="Loading Favourites page" />}
+          >
             <FavouritesPage />
           </Suspense>
         ),
@@ -36,7 +38,7 @@ const router = createBrowserRouter([
       {
         path: 'login',
         element: (
-          <Suspense fallback={<div>Loading login page...</div>}>
+          <Suspense fallback={<LoadingComponent text="Loading login page" />}>
             <Login />
           </Suspense>
         ),
