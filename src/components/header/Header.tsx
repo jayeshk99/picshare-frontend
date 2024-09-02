@@ -63,7 +63,7 @@ const Header: React.FC<HeaderProps> = ({ currentTab, onTabChange }) => {
                 label="Favorite"
                 value="favorite"
                 component={Link}
-                to="/favourite"
+                to="/favourites"
               />
             </Tabs>
           </Box>

@@ -47,8 +47,7 @@ const Login: React.FC = () => {
 
   const handleLogin = async () => {
     try {
-      const response = await login(userName);
-      console.log('response:', response);
+      await login(userName);
       console.log('Login successful!');
       navigate('/');
     } catch (error) {

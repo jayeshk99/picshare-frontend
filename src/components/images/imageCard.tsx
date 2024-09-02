@@ -14,11 +14,34 @@ import ImageModal from '../Modal/ImageModal';
 
 interface ImageCardProps {
   image: IImageData;
+  isFavorite: boolean;
+  toggleFavorite: (id: string) => Promise<void>;
 }
 
-const ImageCard: React.FC<ImageCardProps> = ({ image }) => {
-  console.log('image:', image);
+const ImageCard: React.FC<ImageCardProps> = ({
+  image,
+  isFavorite,
+  toggleFavorite,
+}) => {
   const [open, setOpen] = useState(false);
+
+  // const toggleFavorite = async (e: any) => {
+  //   e.stopPropagation();
+  //   try {
+  //     await addToFavorites(image.id);
+  //     refreshData();
+  //     // Re-fetch favorites to update UI
+  //   } catch (error) {
+  //     console.error('Error adding to favorites:', error);
+  //   }
+  // };
+
+  const handleFavoriteClick = async (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    e.stopPropagation();
+    await toggleFavorite(image.id);
+  };
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -62,10 +85,8 @@ const ImageCard: React.FC<ImageCardProps> = ({ image }) => {
             </Box>
             <IconButton
               aria-label="add to favorites"
-              // sx={{ position: 'absolute', top: 8, right: 8 }}
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
+              onClick={handleFavoriteClick}
+              color={isFavorite ? 'error' : 'default'}
             >
               <FavoriteIcon />
             </IconButton>

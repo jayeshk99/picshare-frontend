@@ -14,7 +14,6 @@ export const login = async (userName: string) => {
 
     const { data, statusCode } = response;
     if (statusCode === 200 || statusCode === 201) {
-      console.log('data:', data);
       localStorage.setItem('userId', data.userId); // Ensure local storage access is correct
       return data;
     }
