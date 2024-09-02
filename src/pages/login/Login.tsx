@@ -37,7 +37,7 @@ const useStyles = makeStyles({
   },
 });
 
-export const Login: React.FC = () => {
+const Login: React.FC = () => {
   const classes = useStyles();
 
   const handleLogin = () => {
@@ -79,3 +79,5 @@ export const Login: React.FC = () => {
     </Box>
   );
 };
+
+export default Login;

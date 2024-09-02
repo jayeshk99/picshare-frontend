@@ -6,7 +6,7 @@ import { ImageCard } from '../../components';
 import { IImageData } from '../../types/home';
 import { Container, Grid } from '@mui/material';
 
-export const HomePage = () => {
+const HomePage = () => {
   const { data, error, isLoading } = useQuery({
     queryKey: ['posts'],
     queryFn: getPosts,
@@ -30,3 +30,5 @@ export const HomePage = () => {
     </Container>
   );
 };
+
+export default HomePage;
