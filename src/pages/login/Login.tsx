@@ -61,7 +61,6 @@ const Login: React.FC = () => {
       navigate('/');
     } catch (error) {
       setError('Failed to login');
-      console.error(error);
     }
   };
 
@@ -95,6 +94,16 @@ const Login: React.FC = () => {
           value={userName}
           onChange={inputHandler}
         />
+        {error && (
+          <Typography
+            marginBottom={'20px'}
+            variant="body1"
+            className={classes.subtitle}
+            color="error"
+          >
+            Failed to login
+          </Typography>
+        )}
         <Button
           variant="contained"
           color="primary"
