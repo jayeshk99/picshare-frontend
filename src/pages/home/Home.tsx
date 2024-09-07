@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { getPosts } from '../../services/userApis'; // Ensure this import is correct
+import { useCallback, useEffect, useState } from 'react';
+import { getPosts } from '../../services/userApis';
 import { IImageData } from '../../types/home';
 import { Box, Container, Grid, Typography } from '@mui/material';
 import Header from '../../components/header/Header';
@@ -9,27 +9,36 @@ import { Link, useNavigate } from 'react-router-dom';
 
 const HomePage = () => {
   const [data, setData] = useState<IImageData[]>([]);
-  const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
   const [currentTab, setCurrentTab] = useState('home');
   const [isLoggedIn, setIsLoggedIn] = useState(
     !!localStorage.getItem('userName')
   );
+  const userId = localStorage.getItem('userId');
   const [isClosed, setIsClosed] = useState<boolean>(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const fetchData = async (includeFavorites = true) => {
+  const fetchData = async () => {
+    if (loading) return;
     try {
-      const posts: IImageData[] = await getPosts();
+      setLoading(true);
+      const response: any = await getPosts(page, 12);
 
-      setData(posts);
-      if (includeFavorites && localStorage.getItem('userId')) {
-        const favorites = await getFavorites();
-        setFavoriteIds(favorites.map((fav: any) => fav.post.id));
-      } else {
-        setFavoriteIds([]);
-      }
+      setData((prevData) => [
+        ...prevData,
+        ...response.data.filter(
+          (newPost: IImageData) =>
+            !prevData.some((post) => post.id === newPost.id)
+        ),
+      ]);
+
+      setTotalPages(response.totalPages || totalPages);
     } catch (error) {
       console.error('Error loading data:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -38,33 +47,65 @@ const HomePage = () => {
     localStorage.removeItem('userName');
     setIsLoggedIn(false);
     navigate('/');
-    fetchData(false);
+    fetchData();
   };
 
   const handleAddToFavourite = async (postId: string) => {
     try {
+      const newData = data.map((image) => {
+        if (image.id === postId)
+          return {
+            ...image,
+            favourites: [{ userId: userId || '', postId: image.id }],
+          };
+        return image;
+      });
+      setData(newData);
       await addToFavorites(postId);
     } catch (error) {
       console.error('Error adding to favorites:', error);
-    } finally {
-      fetchData();
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const loadMorePosts = () => {
+    if (page < totalPages && !loading) {
+      setPage(page + 1);
+    }
+  };
 
+  const handleScroll = () => {
+    if (
+      window.innerHeight + window.scrollY >=
+        document.documentElement.scrollHeight - 200 &&
+      !loading
+    ) {
+      loadMorePosts();
+    }
+  };
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [loading]);
+
+  useEffect(() => {
+    if (!isClosed || !loading) {
+      fetchData();
+    }
+  }, [page, isClosed]);
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [loading]);
   const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
     setCurrentTab(newValue);
   };
   const modalCloseHandler = (isClosed: boolean) => {
     setIsClosed(isClosed);
+    if (!isClosed) setData([]);
+    setPage(1);
     navigate('/');
   };
-  useEffect(() => {
-    if (!isClosed) fetchData();
-  }, [isClosed]);
 
   return (
     <div>
@@ -117,7 +158,9 @@ const HomePage = () => {
               <Grid item xs={12} sm={6} md={4} lg={3} key={image.id}>
                 <ImageCard
                   image={image}
-                  isFavorite={favoriteIds.includes(image.id)}
+                  isFavorite={image.favourites.some(
+                    (data) => data.userId === userId
+                  )}
                   toggleFavorite={handleAddToFavourite}
                   cardType="home"
                   isLoggedIn={isLoggedIn}

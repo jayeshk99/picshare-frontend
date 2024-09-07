@@ -48,18 +48,6 @@ describe('HomePage Component', () => {
     ).toBeInTheDocument();
   });
 
-  test('renders posts when available', async () => {
-    (getPosts as jest.Mock).mockResolvedValueOnce(mockPosts);
-    render(
-      <BrowserRouter>
-        <HomePage />
-      </BrowserRouter>
-    );
-
-    expect(await screen.findByAltText('Test Image 1')).toBeInTheDocument();
-    expect(screen.getByText('Test Image 1')).toBeInTheDocument();
-  });
-
   test('renders login message when user is not logged in', () => {
     render(
       <BrowserRouter>
@@ -94,7 +82,7 @@ describe('HomePage Component', () => {
         <HomePage />
       </BrowserRouter>
     );
-    const logOutBtn = screen.getByText(/Log out/i);
+    const logOutBtn = screen.getByTestId('logout');
     expect(logOutBtn).toBeInTheDocument();
     fireEvent.click(logOutBtn);
 

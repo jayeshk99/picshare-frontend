@@ -14,6 +14,12 @@ const mockImage: IImageData = {
   createdBy: 'user1',
   imageUrl: 'https://example.com/test-image.jpg',
   title: 'Test Image',
+  favourites: [
+    {
+      userId: 'user1',
+      postId: '1',
+    },
+  ],
   createdAt: '2024-09-06T00:00:00Z',
   updatedAt: '2024-09-06T00:00:00Z',
 };

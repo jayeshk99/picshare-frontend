@@ -15,6 +15,12 @@ const mockImage: IImageData = {
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   },
+  favourites: [
+    {
+      userId: 'user1',
+      postId: '1',
+    },
+  ],
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
 };

@@ -14,8 +14,13 @@ export interface IImageData {
   createdBy: string;
   user: IUserData;
   post?: Omit<IImageData, 'user'>;
+  favourites: IPostFavourite[];
 }
 
+export interface IPostFavourite {
+  userId: string;
+  postId: string;
+}
 export interface IFavouriteData {
   id: string;
   createdAt: string;

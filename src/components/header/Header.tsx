@@ -7,7 +7,11 @@ import {
   Tabs,
   Tab,
   Box,
+  IconButton,
+  MenuItem,
+  Menu,
 } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
 import { Link, useNavigate } from 'react-router-dom';
 import SharePictureModal from '../Modal/SharePictureModal';
 
@@ -27,6 +31,7 @@ const Header: React.FC<HeaderProps> = ({
   modalCloseHandler,
 }) => {
   const [modalOpen, setModalOpen] = useState(false);
+  const [isShowMenu, setIsShowMenu] = useState(false);
 
   const navigate = useNavigate();
 
@@ -44,7 +49,13 @@ const Header: React.FC<HeaderProps> = ({
   const handleLogin = () => {
     navigate('/login');
   };
+  const handleCloseNavMenu = () => {
+    setIsShowMenu(false);
+  };
 
+  const handleOpenNavMenu = () => {
+    setIsShowMenu(true);
+  };
   return (
     <>
       <AppBar
@@ -76,26 +87,32 @@ const Header: React.FC<HeaderProps> = ({
             </Typography>
 
             {isLoggedIn && (
-              <Tabs
-                value={currentTab}
-                onChange={onTabChange}
-                textColor="inherit"
-              >
-                <Tab
-                  label="Home"
-                  value="home"
-                  component={Link}
-                  to="/"
-                  data-testid="homeTab"
-                />
-                <Tab
-                  label="Favorite"
-                  value="favorites"
-                  component={Link}
-                  to="/favourites"
-                  data-testid="favoriteTab"
-                />
-              </Tabs>
+              <Box>
+                <Tabs
+                  value={currentTab}
+                  onChange={onTabChange}
+                  textColor="inherit"
+                  sx={{
+                    display: { xs: 'none', sm: 'none', md: 'flex' },
+                    flexDirection: 'row',
+                  }}
+                >
+                  <Tab
+                    label="Home"
+                    value="home"
+                    component={Link}
+                    to="/"
+                    data-testid="homeTab"
+                  />
+                  <Tab
+                    label="Favorite"
+                    value="favorites"
+                    component={Link}
+                    to="/favourites"
+                    data-testid="favoriteTab"
+                  />
+                </Tabs>
+              </Box>
             )}
           </Box>
 
@@ -117,8 +134,12 @@ const Header: React.FC<HeaderProps> = ({
                 <Button
                   variant="text"
                   color="primary"
-                  sx={{ textTransform: 'none' }}
+                  sx={{
+                    textTransform: 'none',
+                    display: { xs: 'none', sm: 'none', md: 'flex' },
+                  }}
                   onClick={onLogout}
+                  data-testid="logout"
                 >
                   Log out
                 </Button>
@@ -132,6 +153,54 @@ const Header: React.FC<HeaderProps> = ({
               >
                 Log in
               </Button>
+            )}
+            {isLoggedIn && (
+              <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+                <IconButton
+                  size="large"
+                  color="inherit"
+                  onClick={handleOpenNavMenu}
+                >
+                  <MenuIcon />
+                </IconButton>
+                <Menu
+                  id="menu-appbar"
+                  anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  onClose={handleCloseNavMenu}
+                  open={isShowMenu}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'left',
+                  }}
+                  sx={{ display: { xs: 'block', md: 'none' } }}
+                >
+                  <MenuItem>
+                    <Tab label="Home" value="home" component={Link} to="/" />
+                  </MenuItem>
+                  <MenuItem>
+                    <Tab
+                      label="Favorite"
+                      value="favorites"
+                      component={Link}
+                      to="/favourites"
+                    />
+                  </MenuItem>
+                  <MenuItem>
+                    <Button
+                      variant="text"
+                      color="primary"
+                      sx={{ textTransform: 'none' }}
+                      onClick={onLogout}
+                    >
+                      Log out
+                    </Button>
+                  </MenuItem>
+                </Menu>
+              </Box>
             )}
           </Box>
         </Toolbar>
