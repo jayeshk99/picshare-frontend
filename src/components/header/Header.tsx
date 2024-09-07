@@ -81,12 +81,19 @@ const Header: React.FC<HeaderProps> = ({
                 onChange={onTabChange}
                 textColor="inherit"
               >
-                <Tab label="Home" value="home" component={Link} to="/" />
+                <Tab
+                  label="Home"
+                  value="home"
+                  component={Link}
+                  to="/"
+                  data-testid="homeTab"
+                />
                 <Tab
                   label="Favorite"
                   value="favorites"
                   component={Link}
                   to="/favourites"
+                  data-testid="favoriteTab"
                 />
               </Tabs>
             )}
@@ -100,6 +107,7 @@ const Header: React.FC<HeaderProps> = ({
                   color="primary"
                   sx={{ textTransform: 'none', marginRight: '16px' }}
                   onClick={handleOpenModal}
+                  data-testid="sharePicBtn"
                 >
                   Share Pic
                 </Button>

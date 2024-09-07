@@ -13,6 +13,7 @@ const ImageModal: React.FC<ImageModalProps> = ({ open, onClose, image }) => {
   return (
     <Modal open={open} onClose={onClose}>
       <Box
+        role="dialog"
         sx={{
           position: 'absolute',
           top: '50%',
