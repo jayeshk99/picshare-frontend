@@ -1,66 +1,29 @@
-import { useCallback, useEffect, useState } from 'react';
-import { getPosts } from '../../services/userApis';
-import { IImageData } from '../../types/home';
+import { useEffect, useState } from 'react';
 import { Box, Container, Grid, Typography } from '@mui/material';
-import Header from '../../components/header/Header';
 import ImageCard from '../../components/images/ImageCard';
-import { addToFavorites, getFavorites } from '../../services/favourites';
+import { addToFavorites } from '../../services/favourites';
 import { Link, useNavigate } from 'react-router-dom';
+import { usePost } from '../../context/postContext';
+import { useAuth } from '../../context/authContext';
 
 const HomePage = () => {
-  const [data, setData] = useState<IImageData[]>([]);
-  const [currentTab, setCurrentTab] = useState('home');
-  const [isLoggedIn, setIsLoggedIn] = useState(
-    !!localStorage.getItem('userName')
-  );
   const userId = localStorage.getItem('userId');
   const [isClosed, setIsClosed] = useState<boolean>(true);
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
 
-  const fetchData = async () => {
-    if (loading) return;
-    try {
-      setLoading(true);
-      const response: any = await getPosts(page, 12);
-
-      setData((prevData) => [
-        ...prevData,
-        ...response.data.filter(
-          (newPost: IImageData) =>
-            !prevData.some((post) => post.id === newPost.id)
-        ),
-      ]);
-
-      setTotalPages(response.totalPages || totalPages);
-    } catch (error) {
-      console.error('Error loading data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('userId');
-    localStorage.removeItem('userName');
-    setIsLoggedIn(false);
-    navigate('/');
-    fetchData();
-  };
+  const {
+    error,
+    fetchData,
+    addToFavouriteState,
+    isLoading,
+    postData,
+    totalPages,
+  } = usePost();
+  const { user, isLoggedIn } = useAuth();
 
   const handleAddToFavourite = async (postId: string) => {
     try {
-      const newData = data.map((image) => {
-        if (image.id === postId)
-          return {
-            ...image,
-            favourites: [{ userId: userId || '', postId: image.id }],
-          };
-        return image;
-      });
-      setData(newData);
+      addToFavouriteState(postId, user?.userId as string);
       await addToFavorites(postId);
     } catch (error) {
       console.error('Error adding to favorites:', error);
@@ -68,7 +31,7 @@ const HomePage = () => {
   };
 
   const loadMorePosts = () => {
-    if (page < totalPages && !loading) {
+    if (page < totalPages && !isLoading) {
       setPage(page + 1);
     }
   };
@@ -77,7 +40,7 @@ const HomePage = () => {
     if (
       window.innerHeight + window.scrollY >=
         document.documentElement.scrollHeight - 200 &&
-      !loading
+      !isLoading
     ) {
       loadMorePosts();
     }
@@ -85,37 +48,19 @@ const HomePage = () => {
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [loading]);
-
+  }, [isLoading]);
   useEffect(() => {
-    if (!isClosed || !loading) {
-      fetchData();
+    if (!isClosed || !isLoading) {
+      fetchData(page, 12);
     }
   }, [page, isClosed]);
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [loading]);
-  const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
-    setCurrentTab(newValue);
-  };
-  const modalCloseHandler = (isClosed: boolean) => {
-    setIsClosed(isClosed);
-    if (!isClosed) setData([]);
-    setPage(1);
-    navigate('/');
-  };
-
+  }, [isLoading]);
   return (
     <div>
-      <Header
-        currentTab={currentTab}
-        onTabChange={handleTabChange}
-        onLogout={handleLogout}
-        isLoggedIn={isLoggedIn}
-        modalCloseHandler={modalCloseHandler}
-      />
       <Container
         style={{ marginTop: '6rem', marginBottom: '2rem', maxWidth: '80%' }}
       >
@@ -138,7 +83,7 @@ const HomePage = () => {
           </Box>
         )}
 
-        {data.length === 0 ? (
+        {postData.length === 0 ? (
           <Box
             sx={{
               display: 'flex',
@@ -154,7 +99,7 @@ const HomePage = () => {
           </Box>
         ) : (
           <Grid container spacing={2}>
-            {data.map((image) => (
+            {postData.map((image) => (
               <Grid item xs={12} sm={6} md={4} lg={3} key={image.id}>
                 <ImageCard
                   image={image}

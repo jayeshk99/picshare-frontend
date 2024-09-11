@@ -10,6 +10,7 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import { useNavigate } from 'react-router-dom';
 import { sharePost } from '../../services/sharePost';
+import { usePost } from '../../context/postContext';
 
 interface SharePictureModalProps {
   open: boolean;
@@ -26,25 +27,25 @@ const SharePictureModal: React.FC<SharePictureModalProps> = ({
   const [titleError, setTitleError] = useState('');
   const navigate = useNavigate();
 
+  const { fetchData } = usePost();
+
   const handleSubmit = async (e: React.FormEvent) => {
     try {
       e.preventDefault();
       setUrlError('');
       setTitleError('');
 
-      // Regex for URL validation
       const urlPattern =
         /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,6}(:\d{1,5})?(\/\S*)?$/;
 
-      const titlePattern = /^[A-Za-z]+$/;
-
+      const titlePattern = /^(?=.*[A-Za-z])(?=.*\S.*\S)(?!.*\s{4,}).{3,}$/;
       console.log('url test', urlPattern.test(url));
       if (!urlPattern.test(url)) {
         setUrlError('Please enter a valid URL.');
         return;
       }
       if (!titlePattern.test(title)) {
-        setTitleError('Title must contain only letters without any spaces.');
+        setTitleError('Title must contain at least 3 letters.');
         return;
       }
       if (url && title) {
@@ -53,6 +54,7 @@ const SharePictureModal: React.FC<SharePictureModalProps> = ({
         setUrl('');
         setTitle('');
         onClose();
+        fetchData(1, 12, true);
       }
     } catch (error) {
       throw error;

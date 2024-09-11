@@ -1,20 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Container, Grid, Typography } from '@mui/material';
-import Header from '../../components/header/Header';
 import ImageCard from '../../components/images/ImageCard';
 import { getFavorites, removeFromFavorites } from '../../services/favourites';
 import { IFavouriteData } from '../../types/home';
-import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/authContext';
 
 const FavouritesPage = () => {
   const [favorites, setFavorites] = useState<IFavouriteData[]>([]);
-  const [currentTab, setCurrentTab] = useState<string>('favorites');
-  const [isLoggedIn, setIsLoggedIn] = useState(
-    !!localStorage.getItem('userName')
-  );
-  const [isClosed, setIsClosed] = useState<boolean>(true);
-
-  const navigate = useNavigate();
+  const { user, isLoggedIn, logoutHandler, loginHandler } = useAuth();
 
   useEffect(() => {
     const fetchFavorites = async () => {
@@ -31,10 +24,6 @@ const FavouritesPage = () => {
     fetchFavorites();
   }, []);
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
-    setCurrentTab(newValue);
-  };
-
   const handleRemoveFavorite = async (favouriteId: string) => {
     try {
       await removeFromFavorites(favouriteId);
@@ -44,25 +33,8 @@ const FavouritesPage = () => {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('userId');
-    localStorage.removeItem('userName');
-    navigate('/');
-    setIsLoggedIn(false);
-  };
-
-  const modalCloseHandler = (isClosed: boolean) => {
-    !isClosed && navigate('/');
-  };
   return (
     <div>
-      <Header
-        currentTab={currentTab}
-        onTabChange={handleTabChange}
-        isLoggedIn={isLoggedIn}
-        onLogout={handleLogout}
-        modalCloseHandler={modalCloseHandler}
-      />
       <Container
         style={{ marginTop: '6rem', marginBottom: '2rem', maxWidth: '80%' }}
       >

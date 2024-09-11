@@ -4,6 +4,9 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import LoadingComponent from './components/LoadingComponent/LoadingComponent';
+import { AuthProvider } from './context/authContext';
+import { PostProvider } from './context/postContext';
+import PrivateRoute from './protectedRoute';
 
 const Layout = React.lazy(() => import('./layout'));
 const HomePage = React.lazy(() => import('./pages/home/Home'));
@@ -28,11 +31,13 @@ const router = createBrowserRouter([
       {
         path: 'favourites',
         element: (
-          <Suspense
-            fallback={<LoadingComponent text="Loading Favourites page" />}
-          >
-            <FavouritesPage />
-          </Suspense>
+          <PrivateRoute>
+            <Suspense
+              fallback={<LoadingComponent text="Loading Favourites page" />}
+            >
+              <FavouritesPage />
+            </Suspense>
+          </PrivateRoute>
         ),
       },
       {
@@ -52,7 +57,11 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <PostProvider>
+        <RouterProvider router={router} />
+      </PostProvider>
+    </AuthProvider>
   </React.StrictMode>
 );
 

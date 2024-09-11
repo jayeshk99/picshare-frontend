@@ -32,3 +32,10 @@ export interface IFavouriteData {
 }
 
 export type CardType = 'home' | 'favourite';
+
+export interface IPostResponse {
+  data: IImageData[];
+  totalCount: number;
+  page: number;
+  totalPages: number;
+}

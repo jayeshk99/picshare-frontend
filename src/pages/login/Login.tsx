@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Box, Button, TextField, Typography } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import { login } from '../../services/userApis';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/authContext';
 
 const useStyles = makeStyles({
   root: {
@@ -45,7 +45,11 @@ const Login: React.FC = () => {
   const [error, setError] = useState('');
   const [titleError, setTitleError] = useState('');
   const navigate = useNavigate();
+  const { isLoggedIn, loginHandler } = useAuth();
 
+  if (isLoggedIn) {
+    return <Navigate to="/" replace />;
+  }
   const handleLogin = async () => {
     try {
       setTitleError('');
@@ -57,7 +61,7 @@ const Login: React.FC = () => {
         );
         return;
       }
-      await login(userName);
+      loginHandler(userName);
       navigate('/');
     } catch (error) {
       setError('Failed to login');
