@@ -30,6 +30,11 @@ const Header: React.FC = () => {
   const handleLogin = () => {
     navigate('/login');
   };
+  const handleLogout = () => {
+    setCurrentTab('home');
+    navigate('/');
+    logoutHandler();
+  };
 
   const handleOpenNavMenu = () => {
     setIsMobileMenuOpen(true);
@@ -70,7 +75,7 @@ const Header: React.FC = () => {
                 isMobileMenuOpen={isMobileMenuOpen}
                 handleOpenNavMenu={handleOpenNavMenu}
                 handleCloseNavMenu={handleCloseNavMenu}
-                logoutHandler={logoutHandler}
+                logoutHandler={handleLogout}
               />
             )}
           </Box>
@@ -97,7 +102,7 @@ const Header: React.FC = () => {
                     textTransform: 'none',
                     display: { xs: 'none', md: 'flex' },
                   }}
-                  onClick={logoutHandler}
+                  onClick={handleLogout}
                   data-testid="logout"
                 >
                   Log out
