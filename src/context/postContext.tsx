@@ -31,7 +31,6 @@ export const PostProvider = ({ children }: { children: ReactNode }) => {
     try {
       setIsLoading(true);
       const response = await getPosts(page, limit);
-      console.log('response:', response);
       // @ts-ignore
       setPostData((prevData) => {
         return resetData
